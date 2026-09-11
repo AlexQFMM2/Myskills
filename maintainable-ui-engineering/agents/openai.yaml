@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintainable UI Engineering"
+  short_description: "Component and CSS architecture for maintainable interfaces"
+  default_prompt: "Use $maintainable-ui-engineering to implement this interface with clear component and styling boundaries."

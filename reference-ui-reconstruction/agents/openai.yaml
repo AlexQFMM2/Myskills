@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reference UI Reconstruction"
+  short_description: "Evidence-based screenshot and design reconstruction"
+  default_prompt: "Use $reference-ui-reconstruction to analyze this visual reference and reconstruct it faithfully."

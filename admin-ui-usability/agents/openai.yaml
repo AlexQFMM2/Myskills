@@ -1,0 +1,4 @@
+interface:
+  display_name: "Admin UI Usability"
+  short_description: "Task-centered and safe operational admin interfaces"
+  default_prompt: "Use $admin-ui-usability to design or review this admin workflow for real operator usability."

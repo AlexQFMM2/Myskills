@@ -1,0 +1,4 @@
+interface:
+  display_name: "KISS Solution Design"
+  short_description: "Simplest complete product and engineering solutions"
+  default_prompt: "Use $kiss-solution-design to reduce this proposal to the simplest complete solution."
