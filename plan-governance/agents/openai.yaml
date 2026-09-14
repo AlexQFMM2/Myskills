@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Governance"
+  short_description: "Governed plans, task waves, concurrency approval, and archival"
+  default_prompt: "Use $plan-governance to create or audit this implementation plan and its execution controls."

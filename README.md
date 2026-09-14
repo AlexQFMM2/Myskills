@@ -8,6 +8,7 @@ Personal, reusable Codex skills for product and interface development.
 - `reference-ui-reconstruction`: evidence-based screenshot and design reconstruction.
 - `admin-ui-usability`: task-centered, safe, and understandable admin interfaces.
 - `kiss-solution-design`: simplest complete solution design without dropping necessary safeguards.
+- `plan-governance`: persistent plan cataloging, task waves, concurrency approval, execution tracking, and archival.
 
 Each top-level skill directory is independently installable. To install from GitHub, ask Codex to use `skill-installer` with repository `AlexQFMM2/Myskills` and the desired directory paths. Installed skills become available on the next turn.
 
