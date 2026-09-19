@@ -1,212 +1,133 @@
 ---
 name: plan-governance
-description: Create and govern implementation plans with cataloging, task waves, explicit concurrency approval, execution tracking, acceptance, and archival. Use for confirmed product or engineering work that needs a persistent handoff plan; do not use for open-ended brainstorming, KISS architecture review, or unrequested code/deployment changes.
+description: Create and govern frozen implementation plans, file-level change inventories, approved execution batches, progress ledgers, automated verification, and handoffs. Use for confirmed engineering work needing a persistent plan; not open-ended brainstorming or unrequested implementation/deployment.
 ---
 
 # Plan Governance
 
-Manage the plan as an auditable execution record. This skill governs where the plan lives, how work is handed off, when parallel work is allowed, and how completion is proved. It does not decide whether a solution is over-designed; use `kiss-solution-design` for that separate question.
+Plan by business outcome; execute compatible changes in batches. A precise file inventory describes WHAT to change, not a requirement to run a complete edit-test-report cycle for each row. Use kiss-solution-design for solution complexity review.
 
-## Operating modes
+## Modes and authority
 
-Choose the least mutating mode that satisfies the request:
+- Draft: discuss a plan without writing files.
+- Persist: write the requested plan files; planning does not authorize implementation.
+- Audit: inspect without changing unless requested.
 
-- **Draft**: produce or revise a plan in the conversation without writing files.
-- **Persist**: create or update the requested `plan/` files after the user asks for a persistent plan.
-- **Audit**: inspect an existing plan, catalog, task state, ignore rules, dependencies, and evidence without changing them unless requested.
+Do not start agents, change runtime code, deploy, commit, or push merely because the plan mentions those actions.
 
-Do not start agents, edit runtime code, change deployment state, commit, or push merely because a plan mentions those actions.
-
-## Locate the plan
-
-- For a single-repository change, use `<repository>/plan/`.
-- For a change spanning independent repositories, use a clearly designated workspace-level `plan/` or an explicitly chosen owner repository. Record that ownership in the plan.
-- Inspect repository boundaries and current status before writing. In a multi-repository workspace, never treat the workspace root as one Git repository unless it actually is one.
-- Verify that the plan path is ignored with `git check-ignore` before claiming it is local-only. If an existing plan is already tracked, report that fact; do not silently untrack it.
-
-## Execution model: task view plus workstream view
-
-Keep two views of the same work:
-
-1. **Business task view**: what the user needs, such as `T-001 user management` and `T-002 audit log`. This view is the source for scope and final acceptance.
-2. **Execution workstream view**: how to perform the work efficiently across all tasks. Group compatible changes instead of repeatedly taking each task from database to API to UI to final testing.
-
-For ordinary feature work, use this default workstream order unless a concrete dependency requires another order:
-
-1. **Database change plan**: enumerate all schema, migration, seed, index, and local-database changes across the tasks; implement them together and run database-level checks.
-2. **API change plan**: enumerate all new or changed APIs, contracts, services, and errors; implement them together, then run a structural/API smoke check.
-3. **API integration**: exercise the real business flows through the API layer, without depending on the UI. Fix cross-API, data, permission, and state-transition problems here.
-4. **UI implementation**: enumerate affected pages and components, then implement the UI after the API flow is sufficiently stable.
-5. **UI verification**: run the automated UI checks as the default final quality gate after the UI workstream. Do not repeat the expensive full UI check after every business task. If failures are found, record the failure set, fix it in a bounded repair pass, and rerun the relevant automated checks.
-
-The workstream order is a default, not a license to ignore dependencies. Record exceptions and the reason. The API integration gate should pass before broad UI implementation begins unless the plan explicitly documents a safe mock/contract seam.
-
-### Operation cost
-
-Classify execution items by expected feedback and recovery cost, not only wall-clock duration:
-
-- **Fast (快)**: roughly 5–10 minutes; examples include a focused schema/API edit or local database update.
-- **Medium (中)**: roughly 10–20 minutes; examples include API flow checks or a focused UI change.
-- **Slow (慢)**: roughly 20–40 minutes; usually a repair loop or a change with meaningful integration risk.
-- **Very slow (超慢)**: over 40 minutes or with long feedback latency; UI automation and broad regression checks commonly belong here.
-
-Use cost to schedule and batch work. Do not use it to skip necessary lightweight checks. Cheap syntax, startup, route, migration, or targeted smoke checks may happen inside a workstream; expensive end-to-end or UI automation should normally run at the workstream gate.
-
-## Artifact responsibilities and precision
-
-Keep the three plan artifacts deliberately different:
-
-- **`README.md`**: explain why the work exists, the target outcome, scope, architecture, decisions, constraints, risks, lifecycle state, and final acceptance. It is not the file-level execution checklist.
-- **`tasks.md`**: hold the detailed execution plan. Aggregate changes by workstream across the business tasks, preserve dependencies, and maintain the exact change inventory.
-- **`taskList.md`**: hold the current executable ledger. Each unchecked item should identify one concrete file-level change, verification action, or handoff. A line that only repeats `T-004 implement API` is too abstract unless it has linked child change items.
-- **`计划交接文档.md`**: hold handoff notes for this plan. Create it as an empty UTF-8 file when the plan is created. Add handoff context, completed work, changed files, evidence, unresolved issues, and next-start conditions only when another session, agent, or owner needs to take over. Do not duplicate the full task specification here.
-
-### Change inventory
-
-For every implementation workstream, add a change inventory to `tasks.md`. Each change needs a stable ID and these fields:
-
-| Field | Requirement |
-|---|---|
-| Change ID | Use a workstream prefix such as `DB-001`, `API-001`, `INT-001`, `UI-001`, `UIV-001`, or `TEST-001`. |
-| Source tasks | List the business task IDs this change serves. |
-| Repository/file | Use the exact repository-relative path whenever known. |
-| Symbol/target | Name the table, migration, function, route, component, contract, permission, or test target. |
-| Action | State add, modify, remove, filter, wire, migrate, or verify. |
-| Output | Describe the artifact or behavior produced. |
-| Validation | Name the command, test, evidence file, or acceptance check. |
-| Dependencies | Reference change IDs or business task IDs that must finish first. |
-
-Do not leave broad directory descriptions such as `API files` or `affected UI` as the final execution target. If the exact path is not known, create a discovery item first, such as `DISC-001`, with a search scope and an output that updates the inventory. After discovery, replace the broad placeholder with exact paths and symbols before implementation starts.
-
-### Business task decomposition
-
-A business task may map to multiple change items:
-
-```text
-T-004 API and permission contract
-├── API-001 Dapi input/output contract
-├── API-002 permission source
-├── API-003 after_sale_id consumer filtering
-└── TEST-001 contract and type validation
-```
-
-Do not mark a business task fully implemented when only its audit, design, or draft is complete. Record the completion level explicitly: `audit complete`, `design complete`, `implementation complete`, `verification complete`, or `accepted`.
-
-### Executable task ledger
-
-`taskList.md` must list the change IDs and exact actions that can be performed next:
-
-```markdown
-- [ ] API-001 修改 `apps/api/src/.../after-sale.dapi.ts` 的 `defineDapi()`：增加 after_sale_id 范围参数
-- [ ] API-002 修改 `apps/api/src/.../after-sale.usecase.ts` 的查询：按 after_sale_id 过滤关联单据
-- [ ] TEST-001 执行 contracts build 和 API tsc，记录输出路径
-```
-
-Keep business task IDs as grouping headings or references, but do not use abstract business-task lines as the only executable items. Keep `taskList.md` synchronized with the change inventory.
-
-## Required structure
-
-Create only the structure needed by the request:
+## Four artifacts and the freeze rule
 
 ```text
 plan/
-├── catalog/
-│   └── README.md
-└── <feature-name>/
+├── catalog/README.md
+└── <feature>/
     ├── README.md
     ├── tasks.md
     ├── taskList.md
     └── 计划交接文档.md
 ```
 
-Read [references/plan-template.md](references/plan-template.md) when creating or substantially revising a plan. Keep the catalog a quick index, not a second copy of every task.
+Read references/plan-template.md when creating or substantially revising a plan.
 
-### Plan README
+- **README.md — frozen design**: problem/evidence, business task IDs and outcomes, scope/non-goals, architecture and ownership, decisions, constraints, acceptance criteria, rollout/rollback and risks. It contains planned requirements, not live execution results.
+- **tasks.md — frozen execution specification**: aggregate all approved business tasks into workstreams, exact change inventories, dependency batches, verification schedule, ownership and parallel proposals. It explains exactly which files/symbols change and what each batch must deliver.
+- **taskList.md — mutable batch progress ledger**: one progress unit/checkbox per execution batch, with batch ID, covered change IDs, status, blockers and evidence references. Do not create separate progress indicators for functions, business features or individual files. Exact file-level actions remain in tasks.md; batch-internal progress belongs in the handoff.
+- **计划交接文档.md — mutable execution and recovery record**: create as an empty UTF-8 file (no heading/template). Update between turns as well as across sessions, agents or owners. Record meaningful deltas, actual changed files, commands/results, failures and fixes, environment facts, next action and resume conditions. All narrative handoffs for this plan belong here; do not create separate per-turn HANDOFF documents. Reference large raw test artifacts instead of copying them.
 
-Record the problem, evidence, target outcome, scope and non-goals, current architecture, affected repositories and owners, chosen decisions, constraints, dependencies, schedule, acceptance, rollout, rollback, risks, blockers, and change history. Keep runtime configuration and credentials out of the plan.
+Once the user finalizes the plan or authorizes execution of it, README.md and tasks.md are frozen. **Only an explicit user request to replan authorizes editing either file.** Starting/continuing execution, completing a batch, failing a test, discovering a discrepancy, updating lifecycle status or preparing a handoff does not authorize rewriting them, even just their metadata.
 
-### tasks.md
+During execution update taskList.md and 计划交接文档.md only within the feature plan. Catalog lifecycle navigation may be synchronized from taskList.md; never from a frozen README status. Routine progress must not trigger rewriting all four files.
 
-Give each business task a stable ID such as `T-001`. Group tasks into dependency waves (`B0`, `B1`, `B2`, ...), where a later wave cannot start until its declared prerequisites are satisfied. For every task record its owner, repository/files, inputs, outputs, acceptance check, dependencies, shared-resource conflicts, and handoff notes. Also record the task's execution workstream mapping, for example `DB-001`, `API-001`, `INT-001`, `UI-001`, or `UIV-001`, so grouped implementation remains traceable to the original business task. Mark parallel candidates explicitly, but do not treat that mark as authorization.
+If execution reveals missing paths, new scope, changed dependencies or an incorrect frozen instruction, record findings and a proposed change in the handoff, mark the affected ledger item blocked, and request explicit replanning before implementing the changed scope. Continue unaffected authorized work where safe. Do not silently add/redefine tasks in the ledger as a workaround. Ordinary fixes within a planned change and its acceptance criteria do not require replanning.
 
-Do not replace business tasks with only layer tasks. The plan must preserve the business-task view and add the workstream view. A workstream may cover many business tasks, and one business task may map to several workstream items.
+When replanning is explicitly requested, revise both frozen specifications as needed, preserve stable IDs and historical evidence, reconcile the ledger, and freeze the new revision when confirmed. Never erase or empty an existing handoff file.
 
-### taskList.md
+## Repository and plan ownership
 
-Keep this file as the compact progress ledger. Use `- [ ]` and `- [x]` with the stable task IDs. Do not duplicate detailed task specifications here. A checked box is not sufficient evidence for completion; link or summarize the actual test, review, deployment, or acceptance result in the plan README.
+- Single repository: use <repository>/plan/.
+- Independent repositories: use an explicitly designated workspace plan or owner repository; list affected repositories and integration owner.
+- Read workspace guidance and inspect actual repository boundaries and affected Git status before writing. A non-Git workspace may contain independent repositories or nested category folders; never initialize Git at its root to satisfy this skill.
+- Check ignore/tracked status within the owning repository before claiming the plan is excluded from Git. Do not silently untrack files. For a non-Git plan location, Git ignore checking is not applicable; report storage/backup limitations instead of pretending it is protected.
 
-### catalog/README.md
+## Business view and file-level inventory
 
-Index plans by status, owner, update time, and relative path. Use the lifecycle `草稿`, `待执行`, `进行中`, `阻塞`, `已完成`, and `已归档`. The `Status` field in each plan README is authoritative; the catalog is the navigation surface and must be updated when lifecycle state changes. Never hide a blocked or incomplete plan under “已归档”.
+Preserve stable business IDs (T-001, etc.) and acceptance outcomes in README; tasks.md maps changes back to these IDs. Do not duplicate a full end-to-end business workflow beneath every business task as the execution order.
 
-## Concurrency gate
+Group the inventory by database, API implementation, API integration, UI implementation and automated UI verification. Every executable change has:
 
-Before proposing parallel execution, inspect all candidate tasks for:
+- Stable change ID (DB-001, API-001, INT-001, UI-001, UIV-001, TEST-001).
+- Source business IDs; exact repository-relative file paths; target table/function/route/component/permission/test.
+- Concrete action and expected output; owner; inputs; dependencies and shared resource conflicts.
+- Acceptance check and verification ID. A verification reference does NOT mean run it immediately after this row.
 
-1. Unmet dependencies or ordering constraints.
-2. Shared files, generated artifacts, databases, environments, or external resources.
-3. Clear ownership of the merge, integration, and final acceptance.
-4. A safe recovery path if one branch fails or produces incompatible output.
+Inspect code before asserting existing paths or symbols. Label proposed new files explicitly. Do not invent paths for precision or use ellipses, broad directories, or 'affected APIs' as executable targets. Combine compatible edits to the same file/target across business tasks; do not split every small symbol into its own delivery gate.
 
-Write the result into `tasks.md` as “parallel candidate” or “serial”. Explicitly ask for or record the user's approval before launching multiple agents. If approval is absent, prepare handoff notes only. Database migrations, production changes, shared configuration edits, and same-file changes are serial by default.
+Resolve file discovery before freezing implementation scope. If discovery is itself the only approved work, give it a DISC ID and a bounded search/output; implementation remains blocked until the user explicitly requests replanning with the findings. A discovery task cannot authorize automatic edits to frozen tasks.md.
 
-The user may choose a multi-agent workflow. Record the chosen execution mode, but keep the plan independent of a particular agent API or invocation mechanism.
+## Execution batches, not row-by-row delivery
 
-Workstream batching does not automatically authorize parallel execution. A database workstream, API workstream, UI workstream, or verification workstream can still have shared files and ordering constraints. Ask for approval only for the concrete parallel assignment, not for the existence of the workstream model.
+The approved scope is the batching boundary. Do not enter an unauthorized business wave to improve batching. Within that scope default to:
 
-## How to run approved parallel work
+1. Database batch: enumerate and implement all related schema/migrations/local database preparation. Apply only to authorized targets, retaining data-integrity and recovery safeguards.
+2. API implementation batch: complete contracts, services, permissions, consumers and composition across the approved tasks. Test code can be written alongside implementation without running full suites after each edit.
+3. API verification batch: run the planned build/type checks and API business-flow tests, then integration checks against authorized isolated resources. Aggregate failures, repair by root cause, rerun affected checks and perform required batch regression.
+4. UI implementation batch: enumerate and implement all related pages/components after the API gate passes.
+5. UI automated verification batch: automatic by default, after UI implementation; collect failures, repair and rerun affected checks. Manual viewing is not a default prerequisite or a substitute. Any waiver requires explicit user approval and recorded coverage limitations.
 
-Treat `B0`, `B1`, `B2`, ... as dependency waves, not as agent names or automatic scheduling instructions. After building the task dependency graph, choose one of these patterns and write the assignment into `tasks.md`:
+A batch can include many precise file items. Document its member IDs, entry prerequisites, implementation exit condition, verification gate and authorization boundary before freezing. Business waves B0/B1/etc. express dependency/scope boundaries, not automatic per-task testing instructions. Skip inapplicable layers with a reason; do not manufacture database work for a UI-only change.
 
-### Wave-parallel
+Do not reset a batch at each turn, checkbox, file, business task or agent handoff. Resume its remaining work. Serial execution means one safe stream of edits, not complete testing and handoff after every row.
 
-Tasks in the same wave can start together when they have no unmet dependencies and no unsafe shared resource. For example:
+## Verification scheduling and cost
 
-```text
-Agent A: B1/T-101, B1/T-102
-Agent B: B1/T-103, B1/T-104
-```
+Classify expected cost using the user's approximate ranges: 快 5–10, 中 10–20, 慢 20–40, 超慢 >40 minutes. These are estimates, not mandatory delays or permission to skip safety checks.
 
-Both agents report their outputs, tests, changed files, and unresolved issues to the integration owner before the next wave begins.
+Each verification entry names the exact command/check, working directory/environment, covered change IDs, timing, prerequisites and rerun trigger:
 
-### Relay or pipeline
+- Immediate lightweight check: focused syntax/parse/startup or a narrowly targeted diagnostic necessary for safe continued work. Repeated auth/contracts builds, whole-API type checks and multi-file regressions are not lightweight merely because they are automated. Record the reason for an exceptional early expensive run.
+- Batch gate: shared builds, type checks, targeted suites and API integration after the corresponding implementation batch. If generation/build is needed to unblock implementation, do that required prerequisite without automatically running the entire test chain.
+- Final UI gate: concentrated automated checks of affected routes, interactions, errors, permissions and relevant layout states.
 
-An agent owns an early wave and another agent owns a later wave. The later agent must wait for the earlier wave's exit evidence and handoff; this is staged parallelism, not simultaneous execution. For example:
+Run the dependency-aware verification set, collect failures where safe, group fixes by root cause, then rerun affected checks. Stop dependent checks when prerequisites fail; stop unsafe operations rather than accumulating harmful failures. Do not blindly rerun the full chain after every tiny fix.
 
-```text
-Agent A: B0 → B1
-  handoff: API notes, changed files, tests, decisions
-Agent B: B2 → B3
-  start condition: Agent A's B1 acceptance is recorded
-```
+Reuse passing evidence only when relevant source, contracts, dependencies, environment and test configuration remain valid. Record what change invalidates it. A final summary does not inherently require repeating every already-valid test; shared changes still require affected regression. Define a bounded repair pass; unresolved recurring failures become a documented blocker/decision rather than an endless green-test loop.
 
-The example above is invalid as simultaneous execution if B2 depends on B0 or B1. If B2 is genuinely independent, split it into an explicitly independent task and document why it can start early.
+## Ledger and evidence semantics
 
-### Cross-repository split
+Use one checkbox per execution batch, not per function, business task, file or test case. Each line identifies its batch, covered change IDs, current status (pending/in progress/blocked/complete), exit condition and handoff evidence link. Merely putting file-level checkboxes under batch headings does NOT satisfy this rule. No feature-count or file-count completion percentages.
 
-Independent repositories may be assigned to different agents, but shared contracts, generated artifacts, deployment configuration, and final integration remain a serial gate. The plan must name the integration owner and the exact handoff artifact.
+Exact file/target/action specifications stay in tasks.md. Record partial implementation, remaining change IDs, test failures and next action in 计划交接文档.md; the batch stays unchecked while incomplete. Do not split a batch into tiny batches just to obtain more checkmarks.
 
-For every approved assignment, record:
+Separate implementation, verification and acceptance:
 
-```markdown
-| Agent/lane | Tasks | Start condition | Handoff artifact | Integration owner |
-|---|---|---|---|---|
-| Agent A | B0/T-001 → B1/T-003 | plan ready | test report + changed-file list | Agent C |
-| Agent B | B1/T-004 | T-001 acceptance | adapter notes | Agent C |
-```
+- An implementation-batch checkbox means all its defined implementation outputs and required immediate safeguards are complete. It does not claim the later verification batch passed.
+- A verification-batch checkbox means all its required checks passed with valid evidence, or an explicit user-approved waiver is recorded.
+- A business outcome is accepted only when its required implementation AND verification batches are complete.
 
-Before launching, present the concrete mapping and ask for explicit approval. Approval applies to that mapping and scope only; adding a task, changing a shared file, or changing the execution order requires a new confirmation. If approval is absent, keep the assignment as a proposal and do not launch agents.
+Do not run expensive checks solely to tick an implementation batch. Do not mark implementation complete when only audit/design is done. Partial progress does not complete a batch.
 
-## Lifecycle and completion
+taskList.md is authoritative for current lifecycle: 草稿 / 待执行 / 进行中 / 阻塞 / 已完成 / 已归档. The handoff is authoritative for detailed execution evidence and recovery facts. README/tasks remain the approved specification. Catalog is only an index and mirrors lifecycle changes from the ledger.
 
-- Move from `草稿` to `待执行` only when scope, owner, task IDs, dependencies, and acceptance are present.
-- Move to `进行中` only when execution has actually started and any required concurrency approval exists.
-- A `阻塞` state must name the blocker, impact, owner, and next decision or action.
-- Mark `已完成` only after acceptance evidence is recorded, not merely when checkboxes are checked.
-- Mark `已归档` only after no required task or handoff remains. Preserve the plan for audit and recovery.
+- 待执行 requires confirmed scope, owners, IDs, exact targets, batch schedule and acceptance.
+- 进行中 requires actual authorized execution.
+- 阻塞 records blocker, impact, owner and next action.
+- 已完成 requires acceptance evidence, not only checkboxes.
+- 已归档 requires no remaining required work/handoff; preserve history.
 
-When auditing, check catalog-to-plan consistency, missing task IDs, lane/taskList ID drift, impossible wave dependencies, missing business-task-to-workstream mappings, missing or overly broad change-inventory entries, taskList items without exact paths/symbols/actions, unauthorized parallelization, missing acceptance evidence, and whether `plan/` is truly excluded from publication. Also verify that `计划交接文档.md` exists and is empty when no handoff has occurred, that API integration evidence exists before broad UI work, and that the default automated UI verification was either completed or has a recorded, user-approved exception.
+Update ledger progress as it changes. Between turns, add concise handoff deltas when useful for continuity; do not force a full recap or verification run each turn. At batch completion, pause or takeover, record a usable recovery point. Summarize results once in the handoff and reference them from the ledger.
 
-## Delivery
+## Parallel execution
 
-When a persistent plan is requested, report the plan path, lifecycle state, affected repositories, concurrency decisions, unresolved blockers, and validation performed. Do not include secrets or assume that “not uploaded” means “backed up”; call out the storage and recovery trade-off when relevant.
+Batching does not authorize parallel agents. Before proposing concurrency inspect unmet dependencies, shared files/generated artifacts/databases/environments, integration ownership and recovery paths. Same-file work, migrations, production operations and shared configuration are serial by default.
+
+Before freezing record any proposed mapping in tasks.md: lane, change IDs, start condition, output/handoff and integration owner. Launch only after explicit user approval of that concrete scope/mapping. During execution record approval in the handoff/ledger without editing frozen tasks. Changing the planned mapping or scope requires explicit replanning and renewed concurrency approval.
+
+Independent same-wave tasks may run together when safe; dependent later tasks wait for prerequisite exit evidence. Relay lanes are not simultaneous execution when one depends on the other's output. Cross-repository work still needs a serial shared-contract/integration gate. Keep plans independent of any specific agent API.
+
+## Audit and delivery
+
+Check ID references across inventory, batches, lane assignments and ledger; dependency feasibility; exact path/action precision; implementation versus acceptance semantics; catalog-to-ledger status; and evidence validity. Check frozen files were not rewritten without explicit replanning and that execution did not silently expand scope.
+
+Specifically reject 'edit → full test chain → update four documents' repeated for each inventory row. Require batch membership, verification timing/rerun rules and one narrative handoff location. Check UI automation defaults and user-approved exceptions. Handoff starts empty but may have content after any meaningful execution turn; do not require an agent switch or erase existing content.
+
+Report affected repositories, changed plan paths, lifecycle, approval boundaries, validation and blockers. Never include credentials. Local-only files are not automatically backed up. Do not rewrite existing project plans just because this skill was updated; frozen plans require explicit user replanning.
