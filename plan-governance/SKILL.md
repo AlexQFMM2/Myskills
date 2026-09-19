@@ -52,6 +52,58 @@ Classify execution items by expected feedback and recovery cost, not only wall-c
 
 Use cost to schedule and batch work. Do not use it to skip necessary lightweight checks. Cheap syntax, startup, route, migration, or targeted smoke checks may happen inside a workstream; expensive end-to-end or UI automation should normally run at the workstream gate.
 
+## Artifact responsibilities and precision
+
+Keep the three plan artifacts deliberately different:
+
+- **`README.md`**: explain why the work exists, the target outcome, scope, architecture, decisions, constraints, risks, lifecycle state, and final acceptance. It is not the file-level execution checklist.
+- **`tasks.md`**: hold the detailed execution plan. Aggregate changes by workstream across the business tasks, preserve dependencies, and maintain the exact change inventory.
+- **`taskList.md`**: hold the current executable ledger. Each unchecked item should identify one concrete file-level change, verification action, or handoff. A line that only repeats `T-004 implement API` is too abstract unless it has linked child change items.
+- **`计划交接文档.md`**: hold handoff notes for this plan. Create it as an empty UTF-8 file when the plan is created. Add handoff context, completed work, changed files, evidence, unresolved issues, and next-start conditions only when another session, agent, or owner needs to take over. Do not duplicate the full task specification here.
+
+### Change inventory
+
+For every implementation workstream, add a change inventory to `tasks.md`. Each change needs a stable ID and these fields:
+
+| Field | Requirement |
+|---|---|
+| Change ID | Use a workstream prefix such as `DB-001`, `API-001`, `INT-001`, `UI-001`, `UIV-001`, or `TEST-001`. |
+| Source tasks | List the business task IDs this change serves. |
+| Repository/file | Use the exact repository-relative path whenever known. |
+| Symbol/target | Name the table, migration, function, route, component, contract, permission, or test target. |
+| Action | State add, modify, remove, filter, wire, migrate, or verify. |
+| Output | Describe the artifact or behavior produced. |
+| Validation | Name the command, test, evidence file, or acceptance check. |
+| Dependencies | Reference change IDs or business task IDs that must finish first. |
+
+Do not leave broad directory descriptions such as `API files` or `affected UI` as the final execution target. If the exact path is not known, create a discovery item first, such as `DISC-001`, with a search scope and an output that updates the inventory. After discovery, replace the broad placeholder with exact paths and symbols before implementation starts.
+
+### Business task decomposition
+
+A business task may map to multiple change items:
+
+```text
+T-004 API and permission contract
+├── API-001 Dapi input/output contract
+├── API-002 permission source
+├── API-003 after_sale_id consumer filtering
+└── TEST-001 contract and type validation
+```
+
+Do not mark a business task fully implemented when only its audit, design, or draft is complete. Record the completion level explicitly: `audit complete`, `design complete`, `implementation complete`, `verification complete`, or `accepted`.
+
+### Executable task ledger
+
+`taskList.md` must list the change IDs and exact actions that can be performed next:
+
+```markdown
+- [ ] API-001 修改 `apps/api/src/.../after-sale.dapi.ts` 的 `defineDapi()`：增加 after_sale_id 范围参数
+- [ ] API-002 修改 `apps/api/src/.../after-sale.usecase.ts` 的查询：按 after_sale_id 过滤关联单据
+- [ ] TEST-001 执行 contracts build 和 API tsc，记录输出路径
+```
+
+Keep business task IDs as grouping headings or references, but do not use abstract business-task lines as the only executable items. Keep `taskList.md` synchronized with the change inventory.
+
 ## Required structure
 
 Create only the structure needed by the request:
@@ -63,7 +115,8 @@ plan/
 └── <feature-name>/
     ├── README.md
     ├── tasks.md
-    └── taskList.md
+    ├── taskList.md
+    └── 计划交接文档.md
 ```
 
 Read [references/plan-template.md](references/plan-template.md) when creating or substantially revising a plan. Keep the catalog a quick index, not a second copy of every task.
@@ -152,7 +205,7 @@ Before launching, present the concrete mapping and ask for explicit approval. Ap
 - Mark `已完成` only after acceptance evidence is recorded, not merely when checkboxes are checked.
 - Mark `已归档` only after no required task or handoff remains. Preserve the plan for audit and recovery.
 
-When auditing, check catalog-to-plan consistency, missing task IDs, unchecked tasks, impossible wave dependencies, missing business-task-to-workstream mappings, unauthorized parallelization, missing acceptance evidence, and whether `plan/` is truly excluded from publication. Also verify that API integration evidence exists before broad UI work, and that the default automated UI verification was either completed or has a recorded, user-approved exception.
+When auditing, check catalog-to-plan consistency, missing task IDs, lane/taskList ID drift, impossible wave dependencies, missing business-task-to-workstream mappings, missing or overly broad change-inventory entries, taskList items without exact paths/symbols/actions, unauthorized parallelization, missing acceptance evidence, and whether `plan/` is truly excluded from publication. Also verify that `计划交接文档.md` exists and is empty when no handoff has occurred, that API integration evidence exists before broad UI work, and that the default automated UI verification was either completed or has a recorded, user-approved exception.
 
 ## Delivery
 

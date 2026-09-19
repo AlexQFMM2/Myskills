@@ -95,6 +95,33 @@ Use only the sections that apply, but do not omit the fields needed to execute a
 | Agent/lane | Tasks | Start condition | Handoff artifact | Integration owner |
 |---|---|---|---|---|
 
+## Change inventory
+
+### DB changes
+
+| Change ID | Source tasks | Repository/file | Symbol/target | Action | Output | Validation | Dependencies |
+|---|---|---|---|---|---|---|---|
+
+### API changes
+
+| Change ID | Source tasks | Repository/file | Symbol/target | Action | Output | Validation | Dependencies |
+|---|---|---|---|---|---|---|---|
+
+### Integration changes
+
+| Change ID | Source tasks | Repository/file | Symbol/target | Action | Output | Validation | Dependencies |
+|---|---|---|---|---|---|---|---|
+
+### UI changes
+
+| Change ID | Source tasks | Repository/file | Symbol/target | Action | Output | Validation | Dependencies |
+|---|---|---|---|---|---|---|---|
+
+### Verification changes
+
+| Change ID | Source tasks | Repository/file | Symbol/target | Action | Output | Validation | Dependencies |
+|---|---|---|---|---|---|---|---|
+
 ## B0: prerequisites and blockers
 
 ### T-001 <Task>
@@ -138,9 +165,23 @@ Use only the sections that apply, but do not omit the fields needed to execute a
 ```markdown
 # Execution checklist
 
-- [ ] T-001 <short task name>
-- [ ] T-002 <short task name>
+## T-001 <business task>
+
+- [ ] DB-001 修改 `repository-relative/path` 的 `table/schema`：完成具体数据库变更
+- [ ] API-001 修改 `repository-relative/path` 的 `function/route/contract`：完成具体 API 变更
+- [ ] TEST-001 执行具体命令或测试：记录证据路径
+
+## T-002 <business task>
+
+- [ ] UI-001 修改 `repository-relative/path` 的 `route/component`：完成具体页面变更
+- [ ] UIV-001 执行 UI 自动核查：记录通过项、失败项和修复结果
 ```
+
+`taskList.md` 初始创建时可以只有业务任务分组和待补充项；开始执行前，必须将待执行项细化为变更 ID、精确文件路径、目标符号和具体动作。
+
+## `plan/<feature>/计划交接文档.md`
+
+创建计划时生成一个空的 UTF-8 文件，不填充默认模板内容。只有发生跨会话、跨 Agent 或跨负责人交接时，才在此文件记录交接上下文、已完成项、变更文件、证据、未解决问题和下一步启动条件。
 
 ## `plan/catalog/README.md`
 
