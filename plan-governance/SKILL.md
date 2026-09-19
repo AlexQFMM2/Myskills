@@ -24,6 +24,34 @@ Do not start agents, edit runtime code, change deployment state, commit, or push
 - Inspect repository boundaries and current status before writing. In a multi-repository workspace, never treat the workspace root as one Git repository unless it actually is one.
 - Verify that the plan path is ignored with `git check-ignore` before claiming it is local-only. If an existing plan is already tracked, report that fact; do not silently untrack it.
 
+## Execution model: task view plus workstream view
+
+Keep two views of the same work:
+
+1. **Business task view**: what the user needs, such as `T-001 user management` and `T-002 audit log`. This view is the source for scope and final acceptance.
+2. **Execution workstream view**: how to perform the work efficiently across all tasks. Group compatible changes instead of repeatedly taking each task from database to API to UI to final testing.
+
+For ordinary feature work, use this default workstream order unless a concrete dependency requires another order:
+
+1. **Database change plan**: enumerate all schema, migration, seed, index, and local-database changes across the tasks; implement them together and run database-level checks.
+2. **API change plan**: enumerate all new or changed APIs, contracts, services, and errors; implement them together, then run a structural/API smoke check.
+3. **API integration**: exercise the real business flows through the API layer, without depending on the UI. Fix cross-API, data, permission, and state-transition problems here.
+4. **UI implementation**: enumerate affected pages and components, then implement the UI after the API flow is sufficiently stable.
+5. **UI verification**: run the automated UI checks as the default final quality gate after the UI workstream. Do not repeat the expensive full UI check after every business task. If failures are found, record the failure set, fix it in a bounded repair pass, and rerun the relevant automated checks.
+
+The workstream order is a default, not a license to ignore dependencies. Record exceptions and the reason. The API integration gate should pass before broad UI implementation begins unless the plan explicitly documents a safe mock/contract seam.
+
+### Operation cost
+
+Classify execution items by expected feedback and recovery cost, not only wall-clock duration:
+
+- **Fast (快)**: roughly 5–10 minutes; examples include a focused schema/API edit or local database update.
+- **Medium (中)**: roughly 10–20 minutes; examples include API flow checks or a focused UI change.
+- **Slow (慢)**: roughly 20–40 minutes; usually a repair loop or a change with meaningful integration risk.
+- **Very slow (超慢)**: over 40 minutes or with long feedback latency; UI automation and broad regression checks commonly belong here.
+
+Use cost to schedule and batch work. Do not use it to skip necessary lightweight checks. Cheap syntax, startup, route, migration, or targeted smoke checks may happen inside a workstream; expensive end-to-end or UI automation should normally run at the workstream gate.
+
 ## Required structure
 
 Create only the structure needed by the request:
@@ -46,7 +74,9 @@ Record the problem, evidence, target outcome, scope and non-goals, current archi
 
 ### tasks.md
 
-Give each task a stable ID such as `T-001`. Group tasks into dependency waves (`B0`, `B1`, `B2`, ...), where a later wave cannot start until its declared prerequisites are satisfied. For every task record its owner, repository/files, inputs, outputs, acceptance check, dependencies, shared-resource conflicts, and handoff notes. Mark parallel candidates explicitly, but do not treat that mark as authorization.
+Give each business task a stable ID such as `T-001`. Group tasks into dependency waves (`B0`, `B1`, `B2`, ...), where a later wave cannot start until its declared prerequisites are satisfied. For every task record its owner, repository/files, inputs, outputs, acceptance check, dependencies, shared-resource conflicts, and handoff notes. Also record the task's execution workstream mapping, for example `DB-001`, `API-001`, `INT-001`, `UI-001`, or `UIV-001`, so grouped implementation remains traceable to the original business task. Mark parallel candidates explicitly, but do not treat that mark as authorization.
+
+Do not replace business tasks with only layer tasks. The plan must preserve the business-task view and add the workstream view. A workstream may cover many business tasks, and one business task may map to several workstream items.
 
 ### taskList.md
 
@@ -68,6 +98,8 @@ Before proposing parallel execution, inspect all candidate tasks for:
 Write the result into `tasks.md` as “parallel candidate” or “serial”. Explicitly ask for or record the user's approval before launching multiple agents. If approval is absent, prepare handoff notes only. Database migrations, production changes, shared configuration edits, and same-file changes are serial by default.
 
 The user may choose a multi-agent workflow. Record the chosen execution mode, but keep the plan independent of a particular agent API or invocation mechanism.
+
+Workstream batching does not automatically authorize parallel execution. A database workstream, API workstream, UI workstream, or verification workstream can still have shared files and ordering constraints. Ask for approval only for the concrete parallel assignment, not for the existence of the workstream model.
 
 ## How to run approved parallel work
 
@@ -120,7 +152,7 @@ Before launching, present the concrete mapping and ask for explicit approval. Ap
 - Mark `已完成` only after acceptance evidence is recorded, not merely when checkboxes are checked.
 - Mark `已归档` only after no required task or handoff remains. Preserve the plan for audit and recovery.
 
-When auditing, check catalog-to-plan consistency, missing task IDs, unchecked tasks, impossible wave dependencies, unauthorized parallelization, missing acceptance evidence, and whether `plan/` is truly excluded from publication.
+When auditing, check catalog-to-plan consistency, missing task IDs, unchecked tasks, impossible wave dependencies, missing business-task-to-workstream mappings, unauthorized parallelization, missing acceptance evidence, and whether `plan/` is truly excluded from publication. Also verify that API integration evidence exists before broad UI work, and that the default automated UI verification was either completed or has a recorded, user-approved exception.
 
 ## Delivery
 
