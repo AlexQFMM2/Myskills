@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Code Review"
+  short_description: "Evidence-based reviews with actionable findings"
+  default_prompt: "Use $ai-code-review to review these changes, verify suspected defects, and report prioritized findings with evidence."

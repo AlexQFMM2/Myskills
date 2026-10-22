@@ -1,0 +1,220 @@
+{
+  "repository": "https://github.com/awesome-skills/code-review-skill",
+  "revision": "4850184dfd7765ea7b3c5c4e9b6cf8e0815ee7cb",
+  "license": "MIT",
+  "scope": "All reference/**/*.md files; no upstream scripts or entrypoint.",
+  "adaptation": "Each guide has a local review-rules notice prepended; original guide bytes follow unchanged.",
+  "files": [
+    {
+      "path": "angular.md",
+      "source_path": "reference/angular.md",
+      "source_sha256": "ce9013d7b60c6f8a928f0616f656817aed289090da5e2cc960e5d59febb9dac1",
+      "packaged_sha256": "9c4e6f27de694ed2560c82dfe32dbb6c1bbb70710817119cfb0fcb6f2a979212"
+    },
+    {
+      "path": "architecture-review-guide.md",
+      "source_path": "reference/architecture-review-guide.md",
+      "source_sha256": "8e0004f23fd72d3c016a08a682d9b2deafb208e08d8ff8b53fffa782c319cf08",
+      "packaged_sha256": "9b02235b4d5410245f00d99f436f2331b17fffdbb7bef0a59815c322b4b0ead4"
+    },
+    {
+      "path": "c.md",
+      "source_path": "reference/c.md",
+      "source_sha256": "c153b752e298ba8e85ceaa13cfb0c5352b07251848c678ebd9da491aa78a4713",
+      "packaged_sha256": "95bbfd921295ce0f3d63d7bff55f2445f71aa946c96564a5b6330a98a7ffaa63"
+    },
+    {
+      "path": "code-quality-universal.md",
+      "source_path": "reference/code-quality-universal.md",
+      "source_sha256": "32cfde463bc721a6d576f19cf1ca170a3b5db64f2c4b4323fb0568fc7c422ec4",
+      "packaged_sha256": "42b2877b6b2bad0b473278e830b127108bf162bb29e3c795eb7c0bd0fcd52d9a"
+    },
+    {
+      "path": "code-review-best-practices.md",
+      "source_path": "reference/code-review-best-practices.md",
+      "source_sha256": "8dcab3be4c30805bfd755aed84dd1bc70b639b6b57af17fd1bf1d69d9244ac8d",
+      "packaged_sha256": "3cbb5fdcf6b554166e5fb3e11a04b7f3bc2268986042082a178dcaaa5dce1036"
+    },
+    {
+      "path": "common-bugs-checklist.md",
+      "source_path": "reference/common-bugs-checklist.md",
+      "source_sha256": "17a6b67cf7b43184c77c709e4fbe3a8cd22f6acb3cebd00273f5e8d3eb57d557",
+      "packaged_sha256": "699d9997439275a53be46d745a5c5d2d03a5016625315ff0ab5445706f7abab3"
+    },
+    {
+      "path": "cpp.md",
+      "source_path": "reference/cpp.md",
+      "source_sha256": "8bf4da1da035ec0db5cc55deab021e6042b250b014d07c2d7505aa4bc1917a04",
+      "packaged_sha256": "3061153b578fbd12300f4e0283b31c0d188bbc0659a51eeb741002d8113e7e8b"
+    },
+    {
+      "path": "cross-cutting/async-concurrency-patterns.md",
+      "source_path": "reference/cross-cutting/async-concurrency-patterns.md",
+      "source_sha256": "70cd46106c863c0722dbc7ca034c684bda2af21ed213a1d7f7759819e49e2ee2",
+      "packaged_sha256": "b8d9f97ab67ea27c5be5c15d575f26d7b6273110d4016a5585fd27de71d18fd5"
+    },
+    {
+      "path": "cross-cutting/error-handling-principles.md",
+      "source_path": "reference/cross-cutting/error-handling-principles.md",
+      "source_sha256": "a2b2139bffa96482e1f14d7de94a9d4648749b1b1eb0925dbf3cd07a50f226bf",
+      "packaged_sha256": "b59d819e62f5fefa56c4ee7c94aec8d232bc4df0ba6d390e7aded704c42ccbf9"
+    },
+    {
+      "path": "cross-cutting/n-plus-one-queries.md",
+      "source_path": "reference/cross-cutting/n-plus-one-queries.md",
+      "source_sha256": "015bb5d3291882f792d12858500bbf59e98a14d1a5d0700db5640dbf06386a1a",
+      "packaged_sha256": "0a5181203811421569056e0ad5991d7bee7f43c09ef06801801c6009776aff8a"
+    },
+    {
+      "path": "cross-cutting/sql-injection-prevention.md",
+      "source_path": "reference/cross-cutting/sql-injection-prevention.md",
+      "source_sha256": "c54b67fd73e280e0db7e89199b57212e3627dc460e670c3cc6d144c8c6d1d7e5",
+      "packaged_sha256": "a087ce70c701bf11bbd797f675defacb6a7e8486f4058872b69de71d8d7b14b4"
+    },
+    {
+      "path": "cross-cutting/xss-prevention.md",
+      "source_path": "reference/cross-cutting/xss-prevention.md",
+      "source_sha256": "2d9118e7498f27c63ecb3c78ff9c549ec135a6c9cc170f9989181e0d9fc1cb36",
+      "packaged_sha256": "493d9673d0d9767b9a799e0d9df0c736b69534f1187cd592683abe23930b75fa"
+    },
+    {
+      "path": "csharp.md",
+      "source_path": "reference/csharp.md",
+      "source_sha256": "4c7fcde3ae2d4ad14e1fe9d8af5c1baac669e536e0c5fb1e6da6bc109b837838",
+      "packaged_sha256": "599268659be68e7238766e06906b03a38a8d7e9489e5aa8bf7cc769e974b9c2c"
+    },
+    {
+      "path": "css-less-sass.md",
+      "source_path": "reference/css-less-sass.md",
+      "source_sha256": "22148c2ef86004f28c3c6af94d3d68ad4e19f92b86ef1010bc487cc0588f3bcc",
+      "packaged_sha256": "688c0070a66069fa36cd326a5d869220a021bb5f13e7588bd8fe7499fadc3324"
+    },
+    {
+      "path": "dart.md",
+      "source_path": "reference/dart.md",
+      "source_sha256": "b166f34ca91978670a59179236be8277dfb7e999da819cdcfa35f9219e6ec4f3",
+      "packaged_sha256": "74b8c71c45558d72d423cab052fb994ca9fbefb2b2d3ec7c364f6e5773f4a0bd"
+    },
+    {
+      "path": "django.md",
+      "source_path": "reference/django.md",
+      "source_sha256": "b7ffaf6da75ca3b16408c121ff173f02928c29a4dba0cd71509d569b26603196",
+      "packaged_sha256": "ed1813277ffac9cdaad1cb08eee831c9470f25d7b4d3c72352763be2675646e8"
+    },
+    {
+      "path": "fastapi.md",
+      "source_path": "reference/fastapi.md",
+      "source_sha256": "bf52fb055aceba62aaa16de6e946a7c4c55cb79f1d52c3d3468fe6c6949ca915",
+      "packaged_sha256": "994477aa84ce92107da2ce94d99c11175e38a44fb9a69427f93c50ab787b6358"
+    },
+    {
+      "path": "go.md",
+      "source_path": "reference/go.md",
+      "source_sha256": "c183c3ab9440f4f4ab6f2e6862648781042f5cd4de2ca505ee6a9af3acd528c4",
+      "packaged_sha256": "19c6faf226fd7c93c29d08201f7c962f925fc213c54863015b646794cc80c018"
+    },
+    {
+      "path": "java.md",
+      "source_path": "reference/java.md",
+      "source_sha256": "07083e47b279f8a72bba16a7a5bfafe2af5c03ce14dbd048e0561eb84779edf9",
+      "packaged_sha256": "4e1ec20199bc6f7af0082555f7abcc2d57253c67927b3e394909eb7899c14e2f"
+    },
+    {
+      "path": "java8.md",
+      "source_path": "reference/java8.md",
+      "source_sha256": "ffa415e3d7f2ce70cefb631977a17454d43b69bf2d72a56108e867761ac8adb3",
+      "packaged_sha256": "276af5de765789ee165260763dcdfc056cbee816d6cc41459f3a80773cfa9c7b"
+    },
+    {
+      "path": "kotlin.md",
+      "source_path": "reference/kotlin.md",
+      "source_sha256": "8bc062bf0a675471cb7ba1fe9becf3ab4f64861432b1aec3300b451017f95457",
+      "packaged_sha256": "642931ae6006a81b9090ff5c5ccc654b541fc2df97b992b706b6d9ffad61030c"
+    },
+    {
+      "path": "nestjs.md",
+      "source_path": "reference/nestjs.md",
+      "source_sha256": "786016c5b692ce0b5fa34d4db96160ca53b479c787059db68fb54daf46fb3a46",
+      "packaged_sha256": "d31941247913bf29e4b39f7f5cbe3136c0f6904f4ceba0ba2729ef8260b70ba5"
+    },
+    {
+      "path": "performance-review-guide.md",
+      "source_path": "reference/performance-review-guide.md",
+      "source_sha256": "5118a40ad85d53a3df459810abb18987806f4a1266a2f214646f42b98ce2f08d",
+      "packaged_sha256": "64126fa4c39f40a9ee8287a3a19ebc575312e33ce7a66f35d96dde33c46a257d"
+    },
+    {
+      "path": "php.md",
+      "source_path": "reference/php.md",
+      "source_sha256": "2e40d0e04b9a37f5d42792b1ee401070a2b3decc726a711ba4200e5c03329b95",
+      "packaged_sha256": "a6da7040ae516532c75f14df9085307bd145f8f749e4a50a14af6cd521c11b90"
+    },
+    {
+      "path": "python.md",
+      "source_path": "reference/python.md",
+      "source_sha256": "e0df57bd897f2dd344a21791b04f739a00c7b93a32fc64ec505195048a2ef94c",
+      "packaged_sha256": "2fc55366fa85a16deab08765670148a66a32c3d0972f8331f1654133d9919333"
+    },
+    {
+      "path": "qt.md",
+      "source_path": "reference/qt.md",
+      "source_sha256": "922ed0fe1362bd0a0959e7be81f62c1cf9b77b4e9ad285e189db66fac7751b0e",
+      "packaged_sha256": "e2fc7331d70b1b88e4aed76fd3497fb9e727c85c94cc948f8413b9c6399e1200"
+    },
+    {
+      "path": "react.md",
+      "source_path": "reference/react.md",
+      "source_sha256": "119a2b0be6966d162fbd2be76d3d10c0fd09cdb3d8e76be6ec9d5ed901332bd9",
+      "packaged_sha256": "0bf4d0ba6019752a06e195fd88fd338fd6edbd12f10dedbd929d066d0dc6358d"
+    },
+    {
+      "path": "ruby.md",
+      "source_path": "reference/ruby.md",
+      "source_sha256": "4cd96f8d5062bea49c06eca7db790bf06d35ace42eced0d6d019d7e55254c2f2",
+      "packaged_sha256": "de84ffb510b748203c1ad8a35841823b3aafb5f8a7439b5974df66a451db079d"
+    },
+    {
+      "path": "rust.md",
+      "source_path": "reference/rust.md",
+      "source_sha256": "1bb761f7aada1c597f0a4a7d857f3762673d7e017710402dc17b093fdd9fb569",
+      "packaged_sha256": "ccca5d41d9c74c059f13e4c39c6a55ce0226f17f6124c9d49cdd5330b3bcef61"
+    },
+    {
+      "path": "security-review-guide.md",
+      "source_path": "reference/security-review-guide.md",
+      "source_sha256": "a0271fe590ff17cbf983477e82603fdc184943b70dd6a6805d7bc6390c7ae02c",
+      "packaged_sha256": "38518a57145413a1dacefbd8789ae80eb8db8580b31f530b2aa9f9d527041e05"
+    },
+    {
+      "path": "svelte.md",
+      "source_path": "reference/svelte.md",
+      "source_sha256": "519da3dc582688b6d71e30898b5944192ee4904d69e2aac08655226c585b42e6",
+      "packaged_sha256": "ee8845b1b08a529a0748e1667c85de6162a98760216e9eb3e670e0a4e8a8ab66"
+    },
+    {
+      "path": "swift.md",
+      "source_path": "reference/swift.md",
+      "source_sha256": "c4d7f298265244f34f4a2a9d18116e2c047ee87ca20646ff6d5117802d5e537c",
+      "packaged_sha256": "8b3e6ddb142ed6ac2f8ce816a4d2c67fceafa95adaa3b1329f42aa635a59248f"
+    },
+    {
+      "path": "typescript.md",
+      "source_path": "reference/typescript.md",
+      "source_sha256": "fca6e0e384c5542123a2781adc833599129e24d9881aa9ec7c802a42d8e13bf4",
+      "packaged_sha256": "b8b405fa788184a27d7feb88cbbd6572e57119f6cc19e4ae327c28755442840c"
+    },
+    {
+      "path": "vue.md",
+      "source_path": "reference/vue.md",
+      "source_sha256": "49686f8c59b2069f0b3b322a97555615ec071d991412d98a70b8425dbe94bdd4",
+      "packaged_sha256": "9333c6661851ab703484c7943d3fc16de7242a66622074174f8406014f0f9b79"
+    },
+    {
+      "path": "zig.md",
+      "source_path": "reference/zig.md",
+      "source_sha256": "9a5e9b727d206d91d687ec3cf3caf3ed85e1cbf92b2df5675f82476abe45e017",
+      "packaged_sha256": "770a903a25446eafce6240aabb4f332dfca363707bd769dad773c872521f68d4"
+    }
+  ],
+  "license_sha256": "0595e8e4d9beae7270b2882bcf7cfb78f85fbb54747ea9d83061a7cb2ee569ce"
+}

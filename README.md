@@ -1,6 +1,6 @@
 # Myskills
 
-Personal, reusable Codex skills for product and interface development.
+Personal, reusable Codex skills for product design, implementation, and code review.
 
 ## Skills
 
@@ -8,7 +8,18 @@ Personal, reusable Codex skills for product and interface development.
 - `reference-ui-reconstruction`: evidence-based screenshot and design reconstruction.
 - `admin-ui-usability`: task-centered, safe, and understandable admin interfaces.
 - `kiss-solution-design`: simplest complete solution design without dropping necessary safeguards.
+- `ai-code-review`: evidence-based code and PR reviews with explicit scope, verified findings, impact-based priorities, and separate open questions and optional suggestions.
 - `plan-governance`: construction-ready implementation blueprints that turn complete business requirements into coordinated database, API, verification, and UI batches—reducing uncertainty, repeated design, rework, and unclear progress.
+
+### AI Code Review: implementation evidence
+
+Use `ai-code-review` to review a PR, commit, staged/working changes, or a specified existing module. It follows the affected behavior across callers and dependencies, checks suspected defects against counterevidence, and reports precise locations, triggers, consequences, and repair directions. It accepts either a focused reproduction or a complete static argument; uncertain concerns and optional design improvements stay separate from confirmed defects.
+
+The skill works independently. When relevant skills are available, KISS supplies design criteria, the UI skills supply their specialist criteria, and Plan Governance supplies the accepted scope and verification gates. AI Code Review owns the review evidence and findings; it does not rewrite plans or replace required acceptance tests. Review-only requests leave the implementation intact, while already-authorized review-and-fix work can continue through repair and verification.
+
+The compact core routes to scope/evidence, coverage, reporting, and a complete imported reference catalog from [awesome-skills/code-review-skill](https://github.com/awesome-skills/code-review-skill): 24 language/framework guides and 11 cross-cutting/process guides. Select only the sections relevant to the reviewed code; the catalog is not loaded wholesale. The local coverage checklist records checked, not applicable, and unverified areas with evidence.
+
+The imported guides are pinned to a specific upstream revision, retain the MIT license, and have source/package hashes in `ai-code-review/references/upstream/manifest.json`. Each guide links back to our review rules and adaptation notes, which qualify known security, framework, testing, and performance overgeneralizations. The local evidence gate and priorities govern findings; upstream examples and severity labels are investigation aids. Review does not automatically execute upstream commands or use line-count scoring.
 
 ### Plan Governance: the general contractor
 
