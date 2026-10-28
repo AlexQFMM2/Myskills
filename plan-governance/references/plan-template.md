@@ -124,6 +124,7 @@ Only include applicable batches. Reuse existing IDs instead of introducing unnec
 Complete the applicable sections below with inspected repository facts and confirmed decisions. Text may be long when necessary: execution must not have to redesign the workflow. Mark an inapplicable layer unchanged with a reason, not invented work. Replace all placeholders before freezing.
 
 #### Database batch — unified data changes
+- 预估时间：__–__ 分钟；依据：结构/迁移制作 __，本批检查及环境等待 __（后续验证批次不重复计时）。
 - Related tasks and shared data ownership:
 - Current versus target schema:
 
@@ -136,6 +137,8 @@ Complete the applicable sections below with inspected repository facts and confi
 - Structure/data checks and recovery procedure:
 
 #### API batch — interfaces and processing steps
+- 预估时间：__–__ 分钟；依据：复用/接线 __，必要新增 __，本批即时检查 __（集中验证另计）。
+
 Repeat the following for each affected API, merging shared work across tasks:
 - Change ID and source task IDs:
 - Existing entry point/call chain and evidence:
@@ -150,6 +153,7 @@ Repeat the following for each affected API, merging shared work across tasks:
 - Consumers/contracts to update, with exact paths and steps:
 
 #### API verification batch — executable workflow scripts
+- 预估时间：__–__ 分钟；依据：未在实现批次计入的脚本准备 __，环境/运行 __，预计修复复验 __。
 - Script ID and exact existing/proposed script path:
 - Run command, working directory, server startup and prerequisites:
 - Isolated target and guard against business/production data:
@@ -167,6 +171,8 @@ Define the entire business journey, not only individual endpoint smoke tests. In
 - Coverage mapping to Part I tasks:
 
 #### UI batch — unified page and component changes
+- 预估时间：__–__ 分钟；依据：页面/组件改动 __，接口接线 __，本批即时检查 __（自动核查另计）。
+
 Repeat for each affected page/component, combining related tasks:
 - Task/change IDs, exact route/component/file:
 - Current versus target user journey:
@@ -177,6 +183,7 @@ Repeat for each affected page/component, combining related tasks:
 - Loading/empty/error/retry/success/navigation behavior:
 
 #### UI automated verification batch — explicit interactions
+- 预估时间：__–__ 分钟；依据：自动化准备 __，环境/运行 __，预计修复复验 __。
 - Script/test paths, environment, accounts, commands:
 
 | Scenario | Role and initial data | Route and ordered actions | Expected visible/result states | Error/permission checks | Evidence |
@@ -219,6 +226,18 @@ Validation references above do not require an immediate run after each edit.
 |---|---|---|---|---|---|
 
 Concrete parallel mapping requires explicit approval; record execution approval in handoff/ledger. A changed frozen mapping requires explicit replanning.
+
+## 工期复核 — 完整计划写完后再审视一次
+
+- 各批次是否在标题下给出明确分钟范围及依据：
+- 本次请求执行范围及合计预估（串行相加；仅已批准并行才按依赖计算，不重复计算验证）：
+- 工期是否与工作量、现有完整能力的复用程度及用户预期相称：
+- 异常批次/范围及原因（预估上限超过40分钟，或明显不相称）：
+- 更小但完整的替代方案，以及不能省略的必要工作：
+- 已主动告知用户的具体问题：
+- 用户选择及依据（未答复则标待确认，不视为自动接受）：
+
+异常必须在对话中解释并向用户提问，不能仅写“超慢”或拆批规避。40分钟是审查门槛，不是保证或强制删减安全验证的期限。工期字段补充详细施工图，不压缩实现说明；执行后新发现的工期异常及时告知，更新台账/交接，不擅改冻结图纸。
 
 ## Construction-readiness review — before finalization
 Complete with references to the actual design above, not merely 'yes' because a heading exists.
@@ -289,6 +308,23 @@ When there is meaningful execution progress, record concise dated deltas and a c
 - Next action/resume conditions, blockers and proposed changes awaiting user replanning.
 
 Do not force tests or a full recap merely because a turn ends. At a batch exit/pause/takeover, ensure the recovery point is usable. Ledger references these results; README/tasks do not receive execution logs.
+
+### 工期异常后的剩余改动差异清单（仅触发时填写，不预填空交接文件）
+
+恢复受影响实施前，先核对当前代码/diff并向用户呈现：
+
+| 剩余API/动作 | 已核实的完整复用入口（文件/函数） | 必要的原函数/参数修改 | 验证范围 | 不再改动的文件/职责边界 |
+|---|---|---|---|---|
+
+- 工期异常及具体原因：
+- 已完成有效改动 / 必要未完成改动 / 疑似额外改造：
+- 结构提取若仍声称必需：具体阻断证据；直接调用或最小适配为何不足：
+- 修订预估：实现接线 __ 分钟；验证/环境 __ 分钟；依据：
+- 延后的必要验收（保持未完成，不冒充通过）：
+- 与冻结图纸的差异、需用户确认的收敛/重规划选择：
+- 用户决定与恢复条件：
+
+未证明是接通业务必需的结构整理，不得继续作为前置工作。不能只承诺“简单复用”却继续原重构路线；也不因代码已经写了就全部保留或擅自撤销。若改变冻结设计，先取得明确重规划授权；执行差异清单本身不授权改写tasks。时间盒用于到点报告事实，不用于保证未经核实的完成时间。
 
 ## `plan/catalog/README.md`
 

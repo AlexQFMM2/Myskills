@@ -144,6 +144,26 @@ A batch can include many precise file items. Document its member IDs, entry prer
 
 Do not reset a batch at each turn, checkbox, file, business task or agent handoff. Resume its remaining work. Serial execution means one safe stream of edits, not complete testing and handoff after every row.
 
+## Batch duration estimates and final schedule review
+
+In tasks.md, directly beneath EVERY production batch heading, add an explicit estimated elapsed-time range in minutes and a short basis (implementation, checks and environment waits applicable to that batch). A cost label such as 'slow' is not enough. Keep the detailed construction design; estimates supplement it, not replace it. Avoid double-counting verification assigned to a separate batch. Estimates are assumptions, not delivery guarantees.
+
+After completing the whole plan, review it again for schedule proportionality: does the time match the actual changes and available reusable capabilities? Any batch whose upper estimate exceeds 40 minutes, a requested execution scope totaling over 40 minutes, or an estimate plainly inconsistent with the work/user expectation is an anomaly requiring explicit discussion—not merely the label '超慢'. Do not split batches to evade this review or lower estimates without evidence.
+
+Proactively tell the user which batch/scope is anomalous, where the time goes, why existing actions cannot be reused directly, whether extra refactoring or repeated test/environment work caused the estimate, and what smaller complete alternative exists. Ask a concrete question about revising the plan or accepting the explained duration before finalizing/starting that affected scope. Listing the estimate in a table is not notification. A reasonable long task may be accepted after this discussion; 40 minutes is a review threshold, not a universal delivery deadline. Never remove necessary correctness or safety checks to fit it.
+
+Record the final schedule review and user decision in the draft tasks.md. If execution later reveals a new anomaly or materially exceeds the accepted estimate, notify and ask at a safe checkpoint; record actual/revised estimates in the ledger/handoff without silently editing frozen specifications. A changed design still needs explicit replanning.
+
+### Recovery after a duration anomaly is raised
+
+When the user or agent flags an abnormal duration, first present a concrete remaining-change diff before resuming the affected implementation. Inspect current code/diff, not merely repeat 'reuse existing capabilities'. List: exact API/action; existing complete business entry point (file/function); necessary original-function/parameter modifications; verification scope; and explicit files/responsibilities that will no longer be changed. For non-API work use the equivalent concrete operation and existing entry point. Mark unknowns as evidence gaps rather than inventing reuse paths.
+
+Structural extraction, module reorganization or framework cleanup must not remain prerequisites unless concrete code evidence proves they are necessary to connect the requested behavior. Prefer direct calls or minimal parameter/adaptation changes; explain why these are insufficient before proposing larger work. Do not confuse reusing complete business actions with extracting low-level writes and rebuilding their surrounding responsibilities.
+
+Separate API/implementation time from verification/environment work in the revised estimate. Identify completed valid work, necessary unfinished work and potentially unnecessary changes; do not automatically keep changes merely because they were written, or roll them back without appropriate authorization. Keep required verification explicitly pending if deferred; do not silently drop it to fit a time box.
+
+During execution record this diff and the user's decision in 计划交接文档.md, with a concise batch status in taskList.md. If the frozen blueprint prescribes the now-rejected refactor or scope, request explicit replanning and reconcile it before following the changed design. A verbal promise to simplify is not a replacement for a concrete boundary, nor permission to rewrite frozen files. Preserve a safe checkpoint while resolving the affected scope; a time box is a reporting checkpoint, not an unsupported delivery guarantee.
+
 ## Verification scheduling and cost
 
 Classify expected cost using the user's approximate ranges: 快 5–10, 中 10–20, 慢 20–40, 超慢 >40 minutes. These are estimates, not mandatory delays or permission to skip safety checks.
