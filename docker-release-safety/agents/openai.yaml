@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docker Release Safety"
+  short_description: "Reuse images and guard disk space before releases"
+  default_prompt: "Use $docker-release-safety to check disk space, reuse matching images, and safely retire project build artifacts before release."

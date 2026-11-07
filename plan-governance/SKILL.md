@@ -90,6 +90,7 @@ Load applicable skills from the current catalog before using them. Do not load e
 - admin-ui-usability: actual role journeys, business-friendly forms, permissions, safe transitions, feedback and recovery.
 - reference-ui-reconstruction: when a visual reference exists, evidence-based layout and fidelity requirements.
 - ui-ux-pro-max: relevant layout, interaction, responsive and accessibility decisions.
+- docker-release-safety: when container builds/releases are in scope, actual-host disk gates, verified artifact reuse, and scoped retention. Reference its policy and executable checks instead of copying thresholds here; planning alone does not authorize cleanup or deployment.
 
 'Consult the UI skill during implementation' is not a substitute for resolving design that affects construction now. Implementation-time checks may confirm the design, not become its first creation. If a required skill is unavailable, report that limitation and resolve the required design explicitly rather than claiming it was applied.
 

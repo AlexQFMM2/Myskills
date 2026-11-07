@@ -1,6 +1,6 @@
 # Myskills
 
-Personal, reusable Codex skills for product design, implementation, and code review.
+Personal, reusable Codex skills for product design, implementation, code review, and container releases.
 
 ## Skills
 
@@ -10,6 +10,13 @@ Personal, reusable Codex skills for product design, implementation, and code rev
 - `kiss-solution-design`: simplest complete solution design without dropping necessary safeguards.
 - `ai-code-review`: evidence-based code and PR reviews with explicit scope, verified findings, impact-based priorities, and separate open questions and optional suggestions.
 - `plan-governance`: construction-ready implementation blueprints that turn complete business requirements into coordinated database, API, verification, and UI batches—reducing uncertainty, repeated design, rework, and unclear progress.
+- `docker-release-safety`: disk-space gates before container builds/releases, verified local-image reuse, and scoped artifact retention with executable helpers.
+
+### Docker Release Safety: resource gates
+
+Use [docker-release-safety](docker-release-safety/SKILL.md) before Docker builds, pulls, exports and deployments, or when investigating Docker disk pressure. Its Python helper checks the actual allocation filesystems, enforces a 20 GiB reserve plus estimated additional peak usage, fingerprints stable build inputs, finds matching local images, and previews or applies explicitly scoped image retention. Required recovery/build-source images and all container references remain protected; cache and temporary-file handling have separate ownership rules.
+
+The skill includes a [runbook](docker-release-safety/references/runbook.md) and isolated regression tests. Integrate the helper's exit code into release entrypoints to enforce blocking; installing a skill alone does not intercept shell commands. Plan Governance references this capability for applicable release work without duplicating its policy.
 
 ### AI Code Review: implementation evidence
 
