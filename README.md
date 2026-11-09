@@ -9,8 +9,19 @@ Personal, reusable Codex skills for product design, implementation, code review,
 - `admin-ui-usability`: task-centered, safe, and understandable admin interfaces.
 - `kiss-solution-design`: simplest complete solution design without dropping necessary safeguards.
 - `ai-code-review`: evidence-based code and PR reviews with explicit scope, verified findings, impact-based priorities, and separate open questions and optional suggestions.
-- `plan-governance`: construction-ready implementation blueprints that turn complete business requirements into coordinated database, API, verification, and UI batches—reducing uncertainty, repeated design, rework, and unclear progress.
+- `plan-governance`: external project plans and task test materials, construction-ready implementation batches, frozen specifications, progress ledgers and per-agent handoffs tracked under repository docs.
 - `docker-release-safety`: disk-space gates before container builds/releases, verified local-image reuse, and scoped artifact retention with executable helpers.
+- `git-release-discipline`: a solo owner's agent workflow with one workspace/environment, versioned handoffs and reviewed feature/fix merges into `release`, the only production deployment source.
+
+### Git Release Discipline: one workspace, separate tasks
+
+Use [git-release-discipline](git-release-discipline/SKILL.md) for one project owned by one person working with their agent team. Keep one local directory and development environment, switch task branches in place, and coordinate agent phases around the active branch. The coordinating agent saves and hands off progress before switching to a production-compatible hotfix branch, then brings the repair back into continuing development. Do not automatically create worktrees, clones or per-agent environments.
+
+At a task switch, commit the unfinished work together with the acting agent's `docs/handoffs/<task-id>/<agent-name>.md` on the task branch, push the checkpoint when authorized, and verify its remote record. The handoff describes actual progress, checks, blockers and the next action; it follows the branch and is read again after switching back. External plan/test materials persist across switches and must be matched to the task and revision before reuse. A completed agent round does not imply a completed feature.
+
+The sole production source is the branch named `release`: task branch → review and corrections → merge into `release` → verify → deploy. Other branches may push checkpoints and run checks but cannot deploy, including urgent fixes. Tags identify verified release versions without bypassing this path; rollback reuses a verified prior release through the same entrypoint.
+
+The skill separates local commits, remote backup, fresh upstream synchronization, code review, business eligibility and deployment. Review can be a sequential agent phase in the same directory, with honestly labeled self-review when no independent reviewer is available and project rules permit it; a corporate PR/approval structure is not required. Releases require committed, remotely recorded source and verification of the chosen commit/artifact. Existing controls must be checked for conflicting deploy triggers; the skill does not configure controls or authorize external actions by itself.
 
 ### Docker Release Safety: resource gates
 
@@ -32,10 +43,12 @@ The imported guides are pinned to a specific upstream revision, retain the MIT l
 
 Clarify the requirements and inspect the existing system before construction begins. Integrate applicable specialist skills into a detailed implementation blueprint, then organize execution by work type rather than repeatedly building and testing each feature in isolation.
 
+For new tasks, use one project container with the Git repository, external `plan/` and external task `test/` as siblings. Each agent maintains a tracked task handoff under the repository's `docs/handoffs/`. See [workspace layout and migration boundaries](plan-governance/references/workspace-layout.md). Existing projects/tasks are not automatically moved or untracked. Versioned regression/CI tests remain with application code; the external test directory contains task workbench materials and raw evidence.
+
 - **`README.md` — project overview:** goals, scope, architecture, key decisions, and acceptance principles.
 - **`tasks.md` — construction blueprint:** Part I defines complete business requirements; Part II designs the database, API, API verification, UI, and automated UI verification batches across those requirements. Specify actual files, interfaces, processing steps, and role-based test scenarios with explicit assertions—not just objectives or file lists.
 - **`taskList.md` — manager-facing progress:** one progress unit per production batch, showing its deliverable, status, remaining work, blockers, and evidence references.
-- **`计划交接文档.md` — agent continuity:** initially empty; records execution evidence, issues, and recovery points between turns, sessions, or agents.
+- **`docs/handoffs/<task-id>/<agent-name>.md` — agent continuity inside Git:** each agent owns its task history, concise recovery context, checks, issues and next action; handoffs are committed/pushed with their task branch.
 
 Resolve consequential design questions during planning. A full implementation plan is not ready if interfaces, data rules, routes, or test expectations are deferred to a future design batch. Once finalized, `README.md` and `tasks.md` stay frozen unless the user explicitly requests replanning; execution updates the progress ledger and handoff instead.
 

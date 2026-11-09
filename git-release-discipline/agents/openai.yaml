@@ -1,0 +1,3 @@
+interface:
+  display_name: "Git Release Discipline"
+  short_description: "One workspace, reviewed merges, release-only deployment"

@@ -1,8 +1,8 @@
 # Plan Governance Template
 
-Use applicable sections only. README.md and tasks.md freeze on user finalization/execution approval; edit them thereafter only on an explicit user request to replan. Execution updates taskList.md and 计划交接文档.md, not the frozen specification. Catalog mirrors the ledger lifecycle.
+Use applicable sections only. Resolve paths with [workspace-layout.md](workspace-layout.md): plan/ and task test/ are outside the source repository; each agent's handoff is tracked under repository docs. README.md and tasks.md freeze on user finalization/execution approval; edit them thereafter only on an explicit user request to replan. Execution updates the external taskList.md and the acting agent's docs handoff, not the frozen specification. Catalog mirrors the ledger lifecycle.
 
-## `plan/<feature>/README.md` — frozen design
+## `<project-root>/plan/<task-id>/README.md` — frozen design
 
 ```markdown
 # <Feature>
@@ -11,10 +11,12 @@ Use applicable sections only. README.md and tasks.md freeze on user finalization
 - Plan revision:
 - Owner and affected repositories:
 - Repository boundaries and plan location:
+- Project root, repository directory and external test root:
+- Task ID, owning branch and base SHA:
 - Baseline reviewed:
 - Freeze/approval reference:
 - Live progress: taskList.md
-- Execution evidence and recovery: 计划交接文档.md
+- Execution evidence and recovery: link to the actual repository docs/handoffs/<task-id>/ entry
 
 ## Problem, evidence and target outcomes
 
@@ -53,7 +55,7 @@ Only update this section when the user explicitly requests replanning, not for e
 |---|---|---|
 ```
 
-## `plan/<feature>/tasks.md` — frozen execution specification
+## `<project-root>/plan/<task-id>/tasks.md` — frozen execution specification
 
 Deliver construction drawings, not a list of future design work. Resolve current code facts, ask consequential business questions, apply relevant design skills, and finish implementation/test design in this planning round before requesting finalization. Label proposed new files and never invent existing paths. A discovery-only/staged deliverable is allowed only when explicitly requested by the user; do not substitute it for a requested full plan. Missing authorized access is a reported blocker, not permission to guess or bypass controls.
 
@@ -64,6 +66,8 @@ A completed document template is not necessarily a completed plan. Required inte
 
 ## Scope and ownership
 - Plan revision:
+- Project/repository roots, task ID, branch and base SHA:
+- External plan/test paths and tracked docs handoff locations:
 - Approved business IDs:
 - Owner/integration owner:
 - Execution mode and authorization boundary:
@@ -155,6 +159,8 @@ Repeat the following for each affected API, merging shared work across tasks:
 #### API verification batch — executable workflow scripts
 - 预估时间：__–__ 分钟；依据：未在实现批次计入的脚本准备 __，环境/运行 __，预计修复复验 __。
 - Script ID and exact existing/proposed script path:
+- Path ownership: versioned repository regression/CI test or external task test helper:
+- Repository selection and dependency resolution for an external helper:
 - Run command, working directory, server startup and prerequisites:
 - Isolated target and guard against business/production data:
 - Seed data and role-specific accounts; authentication method:
@@ -167,6 +173,7 @@ Define the entire business journey, not only individual endpoint smoke tests. In
 
 - Test cleanup/isolation teardown, including failure paths:
 - Failure step reporting, nonzero exit behavior and evidence location:
+- Run ID, tested branch/commit or dirty delta, plan/test revision and tested service/artifact provenance:
 - Supplementary unit/regression cases (not a substitute for authenticated API flow):
 - Coverage mapping to Part I tasks:
 
@@ -185,6 +192,7 @@ Repeat for each affected page/component, combining related tasks:
 #### UI automated verification batch — explicit interactions
 - 预估时间：__–__ 分钟；依据：自动化准备 __，环境/运行 __，预计修复复验 __。
 - Script/test paths, environment, accounts, commands:
+- Repository root selection, candidate SHA/artifact, test revision and external run/evidence location:
 
 | Scenario | Role and initial data | Route and ordered actions | Expected visible/result states | Error/permission checks | Evidence |
 |---|---|---|---|---|---|
@@ -264,7 +272,7 @@ A gap in required design prevents construction-ready status. Do not call a full 
 - Required preservation, database target and external-side-effect safeguards:
 ```
 
-## `plan/<feature>/taskList.md` — mutable batch ledger
+## `<project-root>/plan/<task-id>/taskList.md` — mutable batch ledger
 
 One checkbox per batch. Do NOT put file-level/feature-level checkboxes beneath batch headings. Match actual batch IDs and members from tasks.md; the examples below are placeholders to replace before finalization.
 
@@ -273,11 +281,12 @@ One checkbox per batch. Do NOT put file-level/feature-level checkboxes beneath b
 
 - Status: 草稿（定稿且满足门槛后才转待执行）
 - Plan revision:
+- Task branch and baseline/candidate revision associated with this progress:
 - Planning readiness: 规划中 / 待用户澄清 / 图纸完整待确认 / 已定稿
 - Current production batch and usable result:
 - Current authorization:
 - Blocker/owner/next action:
-- Evidence and within-batch recovery: 计划交接文档.md
+- Evidence and within-batch recovery: actual repository docs/handoffs/<task-id>/ entry
 
 One checkbox per actual production batch; readable outputs come first, technical IDs are references.
 
@@ -295,21 +304,24 @@ For an in-progress replan, map historical IDs/evidence into these batch results 
 - Final acceptance evidence / approved exceptions:
 ```
 
-## `plan/<feature>/计划交接文档.md` — initially empty
+## `<repository>/docs/handoffs/<task-id>/<agent-name>.md` — tracked agent handoff
 
-Create a zero-byte UTF-8 file, without even a title. Never erase an existing file. It can be updated between execution turns, not only when agents/sessions change. All narrative handoff notes for the plan go here.
+Each participating agent maintains its own stable task file; do not create files for hypothetical participants or one file per turn. Record attribution when responsibility transfers, preserve existing history, and do not overwrite another agent's narrative. For multiple agents, a small README in the task's handoff directory links their files and identifies the current handoff/next action; it is not a second progress ledger.
+
+Include a self-contained recovery summary with task objective/scope, accepted constraints, branch/base and plan revision. Link the external plan/test paths using their actual roots. Check that the docs file is tracked and include it in the authorized task checkpoint commit/push; this does not back up the external plan/test directories. Never copy secrets, customer data or bulky raw test evidence into the tracked record.
 
 When there is meaningful execution progress, record concise dated deltas and a current recovery point:
 
 - Current batch, authorized scope, completed and remaining change IDs.
+- Active branch, source checkpoint and associated external plan/test revision; verify these again on takeover.
 - Actual changed files and implementation facts, without copying the full frozen specification.
 - Commands, environment, outcomes, evidence references and coverage limits.
 - Failure set, root causes, repair progress and which evidence remains valid.
 - Next action/resume conditions, blockers and proposed changes awaiting user replanning.
 
-Do not force tests or a full recap merely because a turn ends. At a batch exit/pause/takeover, ensure the recovery point is usable. Ledger references these results; README/tasks do not receive execution logs.
+Do not force tests or a full recap merely because a turn ends. At a batch exit/pause/takeover, ensure the recovery point is usable. Ledger references these results; README/tasks do not receive execution logs. External materials persist across Git switches, so reconcile their task/revision with the checked-out code before reusing them or their passing results.
 
-### 工期异常后的剩余改动差异清单（仅触发时填写，不预填空交接文件）
+### 工期异常后的剩余改动差异清单（仅触发时填写）
 
 恢复受影响实施前，先核对当前代码/diff并向用户呈现：
 
@@ -326,7 +338,7 @@ Do not force tests or a full recap merely because a turn ends. At a batch exit/p
 
 未证明是接通业务必需的结构整理，不得继续作为前置工作。不能只承诺“简单复用”却继续原重构路线；也不因代码已经写了就全部保留或擅自撤销。若改变冻结设计，先取得明确重规划授权；执行差异清单本身不授权改写tasks。时间盒用于到点报告事实，不用于保证未经核实的完成时间。
 
-## `plan/catalog/README.md`
+## `<project-root>/plan/catalog/README.md`
 
 ```markdown
 # Plan catalog

@@ -1,11 +1,11 @@
 ---
 name: plan-governance
-description: Create and govern frozen implementation plans, file-level change inventories, approved execution batches, progress ledgers, automated verification, and handoffs. Use for confirmed engineering work needing a persistent plan; not open-ended brainstorming or unrequested implementation/deployment.
+description: Govern implementation plans and task test materials outside the source repository, with frozen specifications, execution batches and per-agent handoffs tracked in docs. Use for confirmed engineering work needing a persistent plan; not open-ended brainstorming or unrequested implementation/deployment.
 ---
 
 # Plan Governance
 
-Turn large requirements into construction-ready blueprints that reduce execution uncertainty, repeated design, rework and opaque progress. Producing four files is NOT the completion objective. README introduces the building; tasks supplies its construction drawings and production organization; taskList shows construction progress to the manager; the handoff lets agents continue internal work without rediscovering it.
+Turn large requirements into construction-ready blueprints that reduce execution uncertainty, repeated design, rework and opaque progress. Producing files is NOT the completion objective. README introduces the building; tasks supplies its construction drawings and production organization; taskList shows construction progress to the owner; agent handoffs let work continue without rediscovery.
 
 Plan by business outcome; execute compatible changes in batches. Prepare the whole approved design before construction, rather than sourcing materials, inventing interfaces and rebuilding for each feature. A precise file inventory locates work but does not explain HOW to build it. Require current behavior → target behavior → ordered modifications → concrete verification, with depth proportional to risk and uncertainty. Long useful specifications are preferable to short ambiguous summaries; repetition and irrelevant detail are not useful depth. Ordinary coding details remain with the implementer; consequential design does not.
 
@@ -17,28 +17,32 @@ Plan by business outcome; execute compatible changes in batches. Prepare the who
 
 Do not start agents, change runtime code, deploy, commit, or push merely because the plan mentions those actions.
 
-## Four artifacts and the freeze rule
+## Artifact ownership and the freeze rule
 
 ```text
-plan/
-├── catalog/README.md
-└── <feature>/
-    ├── README.md
-    ├── tasks.md
-    ├── taskList.md
-    └── 计划交接文档.md
+<project-root>/
+├── <repository>/
+│   ├── .git/
+│   └── docs/handoffs/<task-id>/<agent-name>.md
+├── plan/
+│   ├── catalog/README.md
+│   └── <task-id>/
+│       ├── README.md
+│       ├── tasks.md
+│       └── taskList.md
+└── test/<task-id>/
 ```
 
-Read references/plan-template.md when creating or substantially revising a plan.
+Read [workspace-layout.md](references/workspace-layout.md) when establishing paths, test ownership, agent handoffs or migrating existing materials. Read [plan-template.md](references/plan-template.md) when creating or substantially revising a plan. The project container is not another checkout or Git repository.
 
 - **README.md — frozen overview**: problem/evidence, summary and links to business tasks in tasks.md, scope/non-goals, architecture, ownership, key decisions, constraints, acceptance principles, rollout/rollback and risks. Do not maintain a second detailed task specification here or record live execution results.
 - **tasks.md — frozen two-part implementation plan**: Part I contains the complete business tasks (requirements); Part II derives the detailed production batches from the WHOLE approved task set. It explains current/target flows, unified database/API/UI changes, exact implementation steps and executable verification scenarios. A short Output/Acceptance list or file table alone is insufficient.
 - **taskList.md — mutable batch progress ledger**: one progress unit/checkbox per execution batch, with batch ID, covered change IDs, status, blockers and evidence references. Do not create separate progress indicators for functions, business features or individual files. Exact file-level actions remain in tasks.md; batch-internal progress belongs in the handoff.
-- **计划交接文档.md — mutable execution and recovery record**: create as an empty UTF-8 file (no heading/template). Update between turns as well as across sessions, agents or owners. Record meaningful deltas, actual changed files, commands/results, failures and fixes, environment facts, next action and resume conditions. All narrative handoffs for this plan belong here; do not create separate per-turn HANDOFF documents. Reference large raw test artifacts instead of copying them.
+- **docs/handoffs/<task-id>/<agent-name>.md — tracked execution and recovery record**: each participating agent maintains its own stable task file, with attributed deltas, actual changes, commands/results, failures, next action and resume conditions. Create files only for actual participants; never erase existing history or create one file per turn. Include a concise self-contained recovery summary and links to external plan/test materials. For multiple agents, use a small task handoff index pointing to their files and the current next action; do not duplicate the external ledger or another agent's narrative.
 
 Once the user finalizes the plan or authorizes execution of it, README.md and tasks.md are frozen. **Only an explicit user request to replan authorizes editing either file.** Starting/continuing execution, completing a batch, failing a test, discovering a discrepancy, updating lifecycle status or preparing a handoff does not authorize rewriting them, even just their metadata.
 
-During execution update taskList.md and 计划交接文档.md only within the feature plan. Catalog lifecycle navigation may be synchronized from taskList.md; never from a frozen README status. Routine progress must not trigger rewriting all four files.
+During execution update the external taskList.md and the acting agent's handoff under repository docs. Catalog lifecycle navigation may be synchronized from taskList.md; never from a frozen README status. Routine progress must not trigger rewriting the frozen specifications. Commit/push handoffs with the owning task branch when authorized; external plan/test files do not receive backup through that push.
 
 If execution reveals missing paths, new scope, changed dependencies or an incorrect frozen instruction, record findings and a proposed change in the handoff, mark the affected ledger item blocked, and request explicit replanning before implementing the changed scope. Continue unaffected authorized work where safe. Do not silently add/redefine tasks in the ledger as a workaround. Ordinary fixes within a planned change and its acceptance criteria do not require replanning.
 
@@ -46,10 +50,12 @@ When replanning is explicitly requested, revise both frozen specifications as ne
 
 ## Repository and plan ownership
 
-- Single repository: use <repository>/plan/.
-- Independent repositories: use an explicitly designated workspace plan or owner repository; list affected repositories and integration owner.
+- Single repository inside a project container: use <project-root>/plan/ and <project-root>/test/ beside the repository; put agent handoffs in <repository>/docs/handoffs/.
+- Independent repositories: use an explicitly designated project plan/test root; list affected repositories, their task branches, handoff locations and integration owner.
 - Read workspace guidance and inspect actual repository boundaries and affected Git status before writing. A non-Git workspace may contain independent repositories or nested category folders; never initialize Git at its root to satisfy this skill.
-- Check ignore/tracked status within the owning repository before claiming the plan is excluded from Git. Do not silently untrack files. For a non-Git plan location, Git ignore checking is not applicable; report storage/backup limitations instead of pretending it is protected.
+- Do not assume a standalone repository's parent is its project container. Resolve ambiguous roots before creating files; do not move an existing checkout to satisfy the example. Existing tasks keep their established paths until migration is requested, and installing this skill does not migrate them.
+- External plan/test paths lie outside the source Git boundary; source .gitignore cannot version or back them up. Check that docs handoffs are tracked. For legacy in-repository paths, inspect both ignore and tracked status before any migration; never silently untrack files.
+- Associate external plans and test runs with task, branch, baseline/candidate SHA and plan/test revision. They persist across branch switches and must not be applied to an unrelated checked-out task. Keep versioned regression/CI tests with source; external test/ holds task workbench materials and raw evidence, as detailed in the layout reference.
 
 ## Planning depth and clarification gate
 
@@ -91,6 +97,7 @@ Load applicable skills from the current catalog before using them. Do not load e
 - reference-ui-reconstruction: when a visual reference exists, evidence-based layout and fidelity requirements.
 - ui-ux-pro-max: relevant layout, interaction, responsive and accessibility decisions.
 - docker-release-safety: when container builds/releases are in scope, actual-host disk gates, verified artifact reuse, and scoped retention. Reference its policy and executable checks instead of copying thresholds here; planning alone does not authorize cleanup or deployment.
+- git-release-discipline: when Git implementation/release is in scope, single-workspace task branches, committed docs handoffs and review/merge into the sole production source `release`. Reference its gates without creating another deployment policy.
 
 'Consult the UI skill during implementation' is not a substitute for resolving design that affects construction now. Implementation-time checks may confirm the design, not become its first creation. If a required skill is unavailable, report that limitation and resolve the required design explicitly rather than claiming it was applied.
 
@@ -123,7 +130,7 @@ The inventory indexes the detailed batch design; it must not replace the impleme
 Group the inventory by database, API implementation, API integration, UI implementation and automated UI verification. Every executable change has:
 
 - Stable change ID (DB-001, API-001, INT-001, UI-001, UIV-001, TEST-001).
-- Source business IDs; exact repository-relative file paths; target table/function/route/component/permission/test.
+- Source business IDs; exact paths anchored to the named repository root for source/docs or project root for external plan/test files; target table/function/route/component/permission/test.
 - Concrete action and expected output; owner; inputs; dependencies and shared resource conflicts.
 - Acceptance check and verification ID. A verification reference does NOT mean run it immediately after this row.
 
@@ -163,7 +170,7 @@ Structural extraction, module reorganization or framework cleanup must not remai
 
 Separate API/implementation time from verification/environment work in the revised estimate. Identify completed valid work, necessary unfinished work and potentially unnecessary changes; do not automatically keep changes merely because they were written, or roll them back without appropriate authorization. Keep required verification explicitly pending if deferred; do not silently drop it to fit a time box.
 
-During execution record this diff and the user's decision in 计划交接文档.md, with a concise batch status in taskList.md. If the frozen blueprint prescribes the now-rejected refactor or scope, request explicit replanning and reconcile it before following the changed design. A verbal promise to simplify is not a replacement for a concrete boundary, nor permission to rewrite frozen files. Preserve a safe checkpoint while resolving the affected scope; a time box is a reporting checkpoint, not an unsupported delivery guarantee.
+During execution record this diff and the user's decision in the acting agent's docs handoff, with a concise batch status in the external taskList.md. If the frozen blueprint prescribes the now-rejected refactor or scope, request explicit replanning and reconcile it before following the changed design. A verbal promise to simplify is not a replacement for a concrete boundary, nor permission to rewrite frozen files. Preserve a safe checkpoint while resolving the affected scope; a time box is a reporting checkpoint, not an unsupported delivery guarantee.
 
 ## Verification scheduling and cost
 
@@ -187,7 +194,7 @@ When replanning an in-progress project, map retained historical IDs and evidence
 
 Use one checkbox per execution batch, not per function, business task, file or test case. Each line identifies its batch, covered change IDs, current status (pending/in progress/blocked/complete), exit condition and handoff evidence link. Merely putting file-level checkboxes under batch headings does NOT satisfy this rule. No feature-count or file-count completion percentages.
 
-Exact file/target/action specifications stay in tasks.md. Record partial implementation, remaining change IDs, test failures and next action in 计划交接文档.md; the batch stays unchecked while incomplete. Do not split a batch into tiny batches just to obtain more checkmarks.
+Exact file/target/action specifications stay in tasks.md. Record partial implementation, remaining change IDs, test failures and next action in the acting agent's docs handoff; the batch stays unchecked while incomplete. Do not split a batch into tiny batches just to obtain more checkmarks.
 
 Separate implementation, verification and acceptance:
 
@@ -197,7 +204,7 @@ Separate implementation, verification and acceptance:
 
 Do not run expensive checks solely to tick an implementation batch. Do not mark implementation complete when only audit/design is done. Partial progress does not complete a batch.
 
-taskList.md is authoritative for current lifecycle: 草稿 / 待执行 / 进行中 / 阻塞 / 已完成 / 已归档. The handoff is authoritative for detailed execution evidence and recovery facts. README/tasks remain the approved specification. Catalog is only an index and mirrors lifecycle changes from the ledger.
+taskList.md is authoritative for the external plan's current lifecycle: 草稿 / 待执行 / 进行中 / 阻塞 / 已完成 / 已归档. Agent handoffs own attributed execution evidence and recovery facts for their recorded branch/revision; the task handoff index only routes readers. README/tasks remain the approved specification. Catalog mirrors the ledger. Reconcile branch/revision differences before resuming; neither an external checkmark nor a handoff from another commit proves the current checkout contains the completed work.
 
 - 待执行 requires confirmed scope, owners, IDs, exact targets, batch schedule and acceptance.
 - 进行中 requires actual authorized execution.
@@ -221,6 +228,6 @@ Check that tasks.md contains both complete business requirements and holistic pr
 
 Check ID references across inventory, batches, lane assignments and ledger; dependency feasibility; exact path/action precision; implementation versus acceptance semantics; catalog-to-ledger status; and evidence validity. Check frozen files were not rewritten without explicit replanning and that execution did not silently expand scope.
 
-Specifically reject 'edit → full test chain → update four documents' repeated for each inventory row. Require batch membership, verification timing/rerun rules and one narrative handoff location. Check UI automation defaults and user-approved exceptions. Handoff starts empty but may have content after any meaningful execution turn; do not require an agent switch or erase existing content.
+Specifically reject 'edit → full test chain → rewrite all documents' repeated for each inventory row. Require batch membership, verification timing/rerun rules and one authoritative narrative file per task/agent under docs. Check UI automation defaults and user-approved exceptions, external plan/test root mappings, run provenance and handoff tracking. Record meaningful deltas without requiring an agent switch or erasing existing content.
 
 Report affected repositories, changed plan paths, lifecycle, approval boundaries, validation and blockers. Never include credentials. Local-only files are not automatically backed up. Do not rewrite existing project plans just because this skill was updated; frozen plans require explicit user replanning.

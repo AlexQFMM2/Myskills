@@ -1,4 +1,4 @@
 interface:
   display_name: "Plan Governance"
-  short_description: "Governed plans, task waves, concurrency approval, and archival"
-  default_prompt: "Use $plan-governance to create or audit this implementation plan and its execution controls."
+  short_description: "External plans and tests with tracked agent handoffs"
+  default_prompt: "Use $plan-governance to create or audit the external project plan and task test materials, execution controls, and tracked per-agent handoffs under repository docs."
